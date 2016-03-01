@@ -1,4 +1,4 @@
-require_relative "../lib/inbound_message.rb"
+require "spec_helper.rb"
 
 describe InboundMessage do
   describe "#fill_cancellation" do
