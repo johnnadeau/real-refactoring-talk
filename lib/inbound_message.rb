@@ -1,7 +1,7 @@
 class InboundMessage
   STOP_WORDS = %w(stop unsubscribe unsub cancel)
 
-  attr_accessor :from, :to, :body, :cancellation
+  attr_accessor :from, :to, :body
 
   def initialize(from, to, body, cancellation)
     @from = from
@@ -14,7 +14,7 @@ class InboundMessage
     if stop?
       # would actually be real code to add to blacklist
       "Added #{from} to blacklist"
-    elsif cancellation
+    else
       cancellation.fill
     end
   end
@@ -22,14 +22,16 @@ class InboundMessage
   def response
     if stop?
       "You are unsubscribed from QueueDr"
-    elsif cancellation.nil?
-      "I'm sorry, I don't understand"
     else
       cancellation.response
     end
   end
 
   private
+
+  def cancellation
+    @cancellation ||= NullCancellation.new
+  end
 
   def stop?
     STOP_WORDS.any? { |word| body.downcase.include? word }
