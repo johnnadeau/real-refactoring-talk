@@ -11,26 +11,21 @@ class InboundMessage
   end
 
   def fill_cancellation
-    if stop?
-      # would actually be real code to add to blacklist
-      "Added #{from} to blacklist"
-    else
-      cancellation.fill
-    end
+    cancellation.fill
   end
 
   def response
-    if stop?
-      "You are unsubscribed from QueueDr"
-    else
-      cancellation.response
-    end
+    cancellation.response
   end
 
   private
 
   def cancellation
-    @cancellation ||= NullCancellation.new
+    @cancellation ||= if stop?
+                        StopCancellation.new
+                      else
+                        NullCancellation.new
+                      end
   end
 
   def stop?
